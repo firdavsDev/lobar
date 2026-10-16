@@ -1,0 +1,111 @@
+{
+  "adras": {
+    "idle": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "walk": {
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    }
+  },
+  "atlas": {
+    "annoyed": {
+      "frames": 2,
+      "fps": 0.8,
+      "loop": true
+    },
+    "cook": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "dastarxon": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "dizzy": {
+      "frames": 2,
+      "fps": 4,
+      "loop": true
+    },
+    "drag": {
+      "frames": 3,
+      "fps": 3,
+      "loop": true
+    },
+    "drink": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "eat": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "eyes": {
+      "frames": 2,
+      "fps": 0.7,
+      "loop": true
+    },
+    "fall": {
+      "frames": 2,
+      "fps": 8,
+      "loop": true
+    },
+    "happy": {
+      "frames": 6,
+      "fps": 8,
+      "loop": true
+    },
+    "idle": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "land": {
+      "frames": 1,
+      "fps": 4,
+      "loop": false
+    },
+    "lie": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "read": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "sleep": {
+      "frames": 4,
+      "fps": 3,
+      "loop": true
+    },
+    "stretch": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "talking": {
+      "frames": 2,
+      "fps": 5,
+      "loop": true
+    },
+    "tea": {
+      "frames": 1,
+      "fps": 1,
+      "loop": true
+    },
+    "walk": {
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    }
+  }
+}

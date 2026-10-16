@@ -1,0 +1,6 @@
+.build/
+dist/
+.superpowers/
+*.xcodeproj
+.DS_Store
+/idea.mp4

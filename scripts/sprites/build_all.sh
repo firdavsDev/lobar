@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Regenerate every sprite strip from the raw Gemini sheets in art/<outfit>/.
+# Edit the table below when adding sheets. Usage: scripts/sprites/build_all.sh
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+OUT=Sources/Rayxon/Resources/Sprites
+TMP=$(mktemp -d)
+slice() { uv run --script scripts/sprites/slice.py "$@" 2>/dev/null | tail -1; }
+split() { uv run --script scripts/sprites/split_strip.py "$@" >/dev/null; }
+
+# ---- atlas ----
+mkdir -p $OUT/atlas
+slice art/atlas/idle.jpg    $OUT/atlas/idle.png  --frames 4
+slice art/atlas/walk.jpg    $OUT/atlas/walk.png  --frames 6 --order 2,3,4,1
+slice art/atlas/happy.jpg   $OUT/atlas/happy.png --frames 6
+slice art/atlas/sleep.jpg   $OUT/atlas/sleep.png --frames 4 --strip-floaters
+slice art/atlas/dizzy.jpg   $TMP/dizzy.png       --frames 4
+split $TMP/dizzy.png $OUT/atlas dizzy:2 annoyed:2
+slice art/atlas/actions.jpg $TMP/actions.png     --frames 6
+split $TMP/actions.png $TMP/a fall:2 land:1 talking:2 drag_old:1
+cp $TMP/a/fall.png $TMP/a/land.png $TMP/a/talking.png $OUT/atlas/
+slice art/atlas/reminders.jpg $TMP/rem.png       --frames 8 --order 1,2,4,5,6,7,8
+split $TMP/rem.png $OUT/atlas drag:2 drink:1 eat:1 stretch:1 eyes:2
+if [ -f art/atlas/activities.jpg ]; then
+  slice art/atlas/activities.jpg $TMP/act.png    --frames 6 --strip-floaters
+  split $TMP/act.png $OUT/atlas read:1 cook:1 lie:1 tea:1 dastarxon:1 drag_t:1
+fi
+cp art/atlas/base.jpg $OUT/atlas/reference.jpg 2>/dev/null || true
+
+# ---- adras ----
+if [ -d art/adras ]; then
+  mkdir -p $OUT/adras
+  slice art/adras/adras_idle.jpg $OUT/adras/idle.png --frames 4
+  slice art/adras/adras_walk.jpg $OUT/adras/walk.png --frames 6 --order 2,3,4,1
+  [ -f art/adras/adras_happy.jpg ] && slice art/adras/adras_happy.jpg $OUT/adras/happy.png --frames 6
+  [ -f art/adras/adras_sleep.jpg ] && slice art/adras/adras_sleep.jpg $OUT/adras/sleep.png --frames 4
+  cp art/adras/adras_idle.jpg $OUT/adras/reference.jpg
+fi
+rm -rf $TMP
+uv run --script scripts/sprites/manifest.py $OUT
