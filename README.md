@@ -81,11 +81,11 @@ Testlar: `swift test` (100+). Debug: `RAYXON_DEBUG_EVENT=rain|snow|birthday`, `R
 
 ## Tarqatish (release)
 ```bash
-sudo xcode-select -s /Applications/Xcode.app          # bir marta
-xcrun notarytool store-credentials rayxon-notary --apple-id you@example.com --team-id TEAMID --password <app-specific>
-RAYXON_SIGN_IDENTITY="Developer ID Application: Name (TEAMID)" NOTARY_PROFILE=rayxon-notary scripts/release.sh 0.2.0
-gh release create v0.2.0 dist/Rayxon-0.2.0.dmg
+scripts/release.sh 0.2.0                      # test → versiya → DMG → commit + push → GitHub release
+scripts/release.sh 0.2.0 "Yangi kiyim, ..."   # o'z izohingiz bilan (aks holda oxirgi tegdan beri commitlar)
 ```
+Standart: ad-hoc imzo. Developer ID + notarizatsiya uchun (bir marta `xcrun notarytool store-credentials rayxon-notary ...`):
+`RAYXON_SIGN_IDENTITY="Developer ID Application: Name (TEAMID)" NOTARY_PROFILE=rayxon-notary scripts/release.sh 0.2.0`.
 "Yangilanishni tekshirish" GitHub Releases'dan oxirgi versiyani oladi (`UpdateChecker.repo`).
 
 ---

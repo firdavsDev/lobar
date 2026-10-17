@@ -8,7 +8,8 @@ Repo: github.com/firdavsDev/rayxon. User communicates in Uzbek/English; UI strin
 - `scripts/run.sh` — debug build → `dist/Rayxon.app` → relaunch. `scripts/run.sh --install` → release → `/Applications/Rayxon.app`.
 - `scripts/bundle.sh [debug|release]` — build the .app (SwiftPM resource bundle copied inside).
 - `scripts/sprites/build_all.sh` — regenerate every sprite strip from `art/<outfit>/*.jpg|png` + `manifest.json`.
-- `scripts/release.sh VERSION` — signed/notarized DMG (needs Developer ID + notary profile; see README).
+- `scripts/release.sh VERSION [notes]` — tests, stamps Info.plist, DMG, asks, then commits/pushes + `gh release create`.
+  Ad-hoc signed unless `RAYXON_SIGN_IDENTITY` (+ `NOTARY_PROFILE` for notarization) is set.
 - Logs: `log stream --predicate 'subsystem == "dev.davronbek.rayxon"' --level debug`.
 
 ## Debug hooks (env vars on launch)
