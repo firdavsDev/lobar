@@ -4,7 +4,7 @@
 """Rebuild manifest.json from the strips on disk (frame count = width/256) with per-state fps/loop defaults."""
 import json, os, sys
 from PIL import Image
-FPS = {"idle": (6, True), "walk": (8, True), "happy": (8, True), "dizzy": (4, True), "annoyed": (0.8, True),
+FPS = {"idle": (6, True), "walk": (7, True), "happy": (8, True), "dizzy": (4, True), "annoyed": (0.8, True),
        "sleep": (3, True), "fall": (8, True), "land": (4, False), "talking": (5, True), "drag": (3, True),
        "drink": (1, True), "eat": (1, True), "stretch": (1, True), "eyes": (0.7, True),
        "read": (1, True), "cook": (1, True), "lie": (1, True), "tea": (1, True), "dastarxon": (1, True)}

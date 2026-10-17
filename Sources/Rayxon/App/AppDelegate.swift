@@ -243,8 +243,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             pet.triggerDizzy()
             mood.shaken(at: now); touch()
             sayAndSpeak(line(.dizzy))
-            let fact = "Foydalanuvchi meni silkitishni yoqtiradi (boshim aylangan)"
-            if !memory.contains(fact) { memory.add([fact]) }
         case .fellAndLanded:
             SoundFX.play(.land)
             sayAndSpeak(line(.fell))

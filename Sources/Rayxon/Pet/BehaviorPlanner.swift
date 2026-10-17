@@ -21,7 +21,7 @@ enum BehaviorPlanner {
         let dir: Double = Bool.random(using: &rng) ? 1 : -1
         return .walk(direction: dir,
                      duration: Double.random(in: 1...5, using: &rng),
-                     speed: Double.random(in: 40...65, using: &rng))
+                     speed: Double.random(in: 45...70, using: &rng))
     }
 
     static func shouldStepOffEdge<G: RandomNumberGenerator>(using rng: inout G) -> Bool {

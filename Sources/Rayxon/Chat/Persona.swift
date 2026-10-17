@@ -40,7 +40,8 @@ enum Persona {
     static func extractionPrompt(userText: String, existing: [String]) -> String {
         """
         Quyidagi xabardan foydalanuvchi haqidagi UZOQ MUDDATLI foydali faktlarni ajrat (ismi, ishi, odatlari, yoqtirgan narsalari, muhim rejalar). \
-        Faqat JSON massiv qaytar, har bir fakt qisqa o'zbekcha (lotin) jumla. Fakt bo'lmasa [] qaytar. Hech qanday izoh yozma.
+        Faqat JSON massiv qaytar, har bir fakt qisqa o'zbekcha (lotin) jumla. Fakt bo'lmasa [] qaytar. Hech qanday izoh yozma. \
+        Rayxon bilan o'ynash, silkitish, ko'tarish kabi mayda narsalarni YOZMA — faqat foydalanuvchining hayoti haqidagi faktlar.
         Mavjud faktlar: \(existing.joined(separator: "; "))
         Xabar: "\(userText)"
         """

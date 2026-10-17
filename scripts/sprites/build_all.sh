@@ -11,7 +11,8 @@ split() { uv run --script scripts/sprites/split_strip.py "$@" >/dev/null; }
 # ---- atlas ----
 mkdir -p $OUT/atlas
 slice art/atlas/idle.jpg    $OUT/atlas/idle.png  --frames 4
-slice art/atlas/walk.jpg    $OUT/atlas/walk.png  --frames 6 --order 2,3,4,1
+if [ -f art/atlas/walk4.jpg ]; then slice art/atlas/walk4.jpg $OUT/atlas/walk.png --frames 4
+else slice art/atlas/walk.jpg $OUT/atlas/walk.png --frames 6 --order 2,3,4,1; fi
 slice art/atlas/happy.jpg   $OUT/atlas/happy.png --frames 6
 slice art/atlas/sleep.jpg   $OUT/atlas/sleep.png --frames 4 --strip-floaters
 slice art/atlas/dizzy.jpg   $TMP/dizzy.png       --frames 4
@@ -31,7 +32,8 @@ cp art/atlas/base.jpg $OUT/atlas/reference.jpg 2>/dev/null || true
 if [ -d art/adras ]; then
   mkdir -p $OUT/adras
   slice art/adras/adras_idle.jpg $OUT/adras/idle.png --frames 4
-  slice art/adras/adras_walk.jpg $OUT/adras/walk.png --frames 6 --order 2,3,4,1
+  if [ -f art/adras/adras_walk4.jpg ]; then slice art/adras/adras_walk4.jpg $OUT/adras/walk.png --frames 4
+  else slice art/adras/adras_walk.jpg $OUT/adras/walk.png --frames 6 --order 2,3,4,1; fi
   if [ -f art/adras/adras_happy.jpg ]; then
     slice art/adras/adras_happy.jpg $TMP/ah.png --frames 7 --strip-floaters
     split $TMP/ah.png $OUT/adras happy:4 sleep:1 dizzy:1 annoyed:1
@@ -46,7 +48,9 @@ for o in bahor tungi; do
   walk=$( (ls art/$o/${o}_walk.* 2>/dev/null || true) | head -1)
   happy=$( (ls art/$o/${o}_happy.* 2>/dev/null || true) | head -1)
   [ -n "$idle" ] && slice "$idle" $OUT/$o/idle.png --frames 4 && cp "$idle" $OUT/$o/reference.jpg
-  [ -n "$walk" ] && slice "$walk" $OUT/$o/walk.png --frames 6 --order 2,3,4,1
+  walk4=$( (ls art/$o/${o}_walk4.* 2>/dev/null || true) | head -1)
+  if [ -n "$walk4" ]; then slice "$walk4" $OUT/$o/walk.png --frames 4
+  elif [ -n "$walk" ]; then slice "$walk" $OUT/$o/walk.png --frames 6 --order 2,3,4,1; fi
   if [ -n "$happy" ]; then
     n=$(slice "$happy" $TMP/${o}h.png --strip-floaters | grep -oE '[0-9]+ frames' | cut -d' ' -f1)
     if [ "$n" != "6" ] && [ "$n" != "7" ] && [ "$n" != "8" ]; then

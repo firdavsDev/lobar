@@ -27,7 +27,7 @@
     },
     "walk": {
       "frames": 4,
-      "fps": 8,
+      "fps": 7,
       "loop": true
     }
   },
@@ -124,7 +124,7 @@
     },
     "walk": {
       "frames": 4,
-      "fps": 8,
+      "fps": 7,
       "loop": true
     }
   },
@@ -156,7 +156,7 @@
     },
     "walk": {
       "frames": 4,
-      "fps": 8,
+      "fps": 7,
       "loop": true
     }
   },
@@ -168,7 +168,7 @@
     },
     "walk": {
       "frames": 4,
-      "fps": 8,
+      "fps": 7,
       "loop": true
     }
   }

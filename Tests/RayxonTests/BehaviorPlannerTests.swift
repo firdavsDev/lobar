@@ -25,7 +25,7 @@ struct BehaviorPlannerTests {
                 sawWalk = true
                 #expect(dir == 1 || dir == -1)
                 #expect(d >= 1 && d <= 5)
-                #expect(speed >= 40 && speed <= 65)
+                #expect(speed >= 45 && speed <= 70)
             case .activity(let state, let d):
                 #expect(BehaviorPlanner.activities.contains(state))
                 #expect(d >= 10 && d <= 30)
