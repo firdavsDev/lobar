@@ -30,6 +30,9 @@ final class SettingsStore {
     var projectsFolder: String { didSet { d.set(projectsFolder, forKey: "projectsFolder") } }
     var funEvents: Bool { didSet { d.set(funEvents, forKey: "funEvents") } }
     var lanPeers: Bool { didSet { d.set(lanPeers, forKey: "lanPeers") } }
+    var hotkeyEnabled: Bool { didSet { d.set(hotkeyEnabled, forKey: "hotkeyEnabled") } }
+    var birthday: Date? { didSet { d.set(birthday, forKey: "birthday") } }
+    var birthdayEnabled: Bool { didSet { d.set(birthdayEnabled, forKey: "birthdayEnabled") } }
     var voiceName: String { didSet { d.set(voiceName, forKey: "voiceName") } }
     var volume: Double { didSet { d.set(volume, forKey: "volume") } }
 
@@ -77,6 +80,9 @@ final class SettingsStore {
         projectsFolder = d.string(forKey: "projectsFolder") ?? ""
         funEvents = d.object(forKey: "funEvents") as? Bool ?? true
         lanPeers = d.object(forKey: "lanPeers") as? Bool ?? true
+        hotkeyEnabled = d.object(forKey: "hotkeyEnabled") as? Bool ?? true
+        birthday = d.object(forKey: "birthday") as? Date
+        birthdayEnabled = d.object(forKey: "birthdayEnabled") as? Bool ?? false
         voiceName = d.string(forKey: "voiceName") ?? "uz-UZ-MadinaNeural"
         volume = d.object(forKey: "volume") as? Double ?? 0.8
         waterEnabled = d.object(forKey: "waterEnabled") as? Bool ?? true

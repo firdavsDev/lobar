@@ -7,6 +7,7 @@ final class PetView: NSView {
     weak var controller: PetController?
 
     let parachute = CALayer()
+    let handProp = CALayer()
 
     init(animator: SpriteAnimator, size: CGFloat) {
         self.animator = animator
@@ -20,7 +21,19 @@ final class PetView: NSView {
         parachute.isHidden = true
         parachute.zPosition = 5
         layer?.addSublayer(parachute)
+        handProp.contentsGravity = .resizeAspect
+        handProp.isHidden = true
+        handProp.zPosition = 6
+        layer?.addSublayer(handProp)
         layoutProps()
+    }
+
+    /// Shows/hides a prop held above the head (umbrella).
+    func setHandProp(_ image: CGImage?) {
+        CATransaction.begin(); CATransaction.setDisableActions(true)
+        handProp.contents = image
+        handProp.isHidden = image == nil
+        CATransaction.commit()
     }
 
     /// Square the sprite lives in (bottom of the view).
@@ -30,6 +43,7 @@ final class PetView: NSView {
         let s = bounds.width
         animator.layer.frame = CGRect(x: 0, y: 0, width: s, height: s)
         parachute.frame = CGRect(x: s * 0.02, y: s * 0.72, width: s * 0.96, height: s * 1.2)
+        handProp.frame = CGRect(x: s * 0.12, y: s * 0.62, width: s * 0.9, height: s * 0.75)
     }
 
     func setParachute(_ on: Bool) {

@@ -80,6 +80,8 @@ final class PetController {
         applyBodyToWindow()
     }
 
+    func setHandProp(_ name: String?) { view.setHandProp(name.flatMap { Props.cgImage($0) }) }
+
     /// Screen rect of the sprite square (window is taller to leave room for props above her).
     var spriteFrame: NSRect { NSRect(x: window.frame.minX, y: window.frame.minY, width: size, height: size) }
 

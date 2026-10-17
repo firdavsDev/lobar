@@ -134,6 +134,12 @@ struct SettingsView: View {
         Form {
             Section {
                 TextField("Ismingiz", text: $settings.userName, prompt: Text("ixtiyoriy"))
+                Toggle("Tug'ilgan kunimni biladi", isOn: $settings.birthdayEnabled)
+                if settings.birthdayEnabled {
+                    DatePicker("Tug'ilgan kun", selection: Binding(get: { settings.birthday ?? Date(timeIntervalSince1970: 788_918_400) },
+                                                                  set: { settings.birthday = $0 }), displayedComponents: [.date])
+                }
+                Toggle("Global tugma ⌥Space — chatni ochish", isOn: $settings.hotkeyEnabled)
                 Toggle("O'zi gapirib tursin", isOn: $settings.chatterEnabled)
                 Toggle("Gaplarni AI yozsin (kalit bo'lsa)", isOn: $settings.llmChatter).disabled(!settings.chatterEnabled)
                 Toggle("Tungi rejim (23:00–06:00 uxlaydi)", isOn: $settings.nightMode)

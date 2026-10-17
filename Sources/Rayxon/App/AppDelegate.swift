@@ -29,6 +29,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var catTimer: Timer?
     private var peers: PeerService?
     private var gameWins = 0, gameLosses = 0
+    private let hotKey = HotKey()
+    private var weatherEvents = WeatherEvents()
+    private var floorProps: [FloorProp] = []
+    private var birthdayShownDay: Int?
     private var activeTimer: Timer?
     private var mood = Mood()
     private var now: Double { Date().timeIntervalSince1970 }
@@ -156,6 +160,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             startGitWatcher()
             scheduleCat()
             startPeers()
+            applyHotKey()
             // active-time meter: count a minute when the user touched input in the last 2 minutes
             let at = Timer(timeInterval: 60, repeats: true) { [weak self] _ in
                 MainActor.assumeIsolated {
@@ -179,6 +184,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             if let drop = ProcessInfo.processInfo.environment["RAYXON_DEBUG_DROP_Y"], let y = Double(drop) {
                 pet.debugDrop(toY: y)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 15) { [weak self] in self?.checkBirthday() }
+            if let ev = ProcessInfo.processInfo.environment["RAYXON_DEBUG_EVENT"] {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    guard let self else { return }
+                    switch ev {
+                    case "rain": self.handleWeatherEvent(.rainStarted)
+                    case "snow": self.handleWeatherEvent(.snowStarted)
+                    case "birthday":
+                        self.settings.birthdayEnabled = true; self.settings.birthday = Date(); self.birthdayShownDay = nil; self.checkBirthday()
+                    default: break
+                    }
+                }
             }
             if let say = ProcessInfo.processInfo.environment["RAYXON_DEBUG_SAY"], !say.isEmpty {
                 bubble.say(say); voice.speak(say, force: true)
@@ -537,6 +555,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self, let w = try? await Weather.fetch() else { return }
                 let first = self.lastWeather == nil
                 self.lastWeather = w
+                self.handleWeatherEvent(self.weatherEvents.update(w))
                 if first, let pet = self.pet, !pet.isSleeping {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 20) { [weak self] in self?.sayAndSpeak(w.summaryUz, seconds: 9) }
                 }
@@ -545,6 +564,54 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     pet.setOutfit(o); self.settings.outfit = o
                 }
             }
+    }
+
+    private func handleWeatherEvent(_ e: WeatherEvents.Event?) {
+        guard let e, let pet, settings.funEvents else { return }
+        switch e {
+        case .rainStarted:
+            pet.setHandProp("umbrella"); sayAndSpeak(line(.rain), seconds: 8)
+        case .rainStopped:
+            pet.setHandProp(nil); bubble?.say(line(.rainStopped), seconds: 5)
+        case .snowStarted:
+            pet.setHandProp(nil)
+            if let screen = pet.currentScreen, let img = Props.image("snowman") {
+                let x = pet.body.x + (pet.body.x > Double(screen.visibleFrame.midX) ? -110 : 110)
+                let prop = FloorProp(image: img, x: x, screen: screen, height: 90, seconds: 20 * 60) { [weak self] in self?.floorProps.removeAll() }
+                floorProps.append(prop)
+            }
+            pet.celebrate(seconds: 3); sayAndSpeak(line(.snow), seconds: 8)
+        case .snowStopped:
+            floorProps.forEach { $0.dismiss() }; floorProps.removeAll()
+        }
+    }
+
+    /// Birthday: cake + gift on the floor, celebration, once per day.
+    private func checkBirthday() {
+        guard settings.birthdayEnabled, let bday = settings.birthday, Birthday.isToday(birthday: bday),
+              let pet, let screen = pet.currentScreen else { return }
+        let day = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 0
+        guard birthdayShownDay != day else { return }
+        birthdayShownDay = day
+        if let cake = Props.image("cake") {
+            floorProps.append(FloorProp(image: cake, x: pet.body.x - 90, screen: screen, height: 70, seconds: 3 * 3600) {})
+        }
+        if let gift = Props.image("gift") {
+            floorProps.append(FloorProp(image: gift, x: pet.body.x + 90, screen: screen, height: 60, seconds: 3 * 3600) {})
+        }
+        SoundFX.play(.done); pet.celebrate(seconds: 6); mood.chatted(); mood.chatted()
+        let age = Birthday.age(birthday: bday)
+        sayAndSpeak(line(.birthday) + (age > 0 && age < 120 ? " \(age) yosh — hali yosh!" : ""), seconds: 12, force: true)
+    }
+
+    private func applyHotKey() {
+        hotKey.unregister()
+        guard settings.hotkeyEnabled else { return }
+        // ⌥Space (kVK_Space = 49)
+        hotKey.register(keyCode: 49, modifiers: HotKey.carbonModifiers(option: true, command: false, control: false, shift: false)) { [weak self] in
+            guard let self, let bubble = self.bubble else { return }
+            if bubble.isVisible, bubble.model.showInput { bubble.hide() } else { self.openChat() }
+        }
     }
 
     private func startGitWatcher() {
@@ -569,6 +636,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let pet else { return }
         switch e {
         case .morning:
+            checkBirthday()
             if !pet.isSleeping {
                 sayAndSpeak(line(.morning), seconds: 8); pet.celebrate(seconds: 2)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 12) { [weak self] in
@@ -640,5 +708,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let pet, abs(pet.scale - settings.petScale) > 0.001 { pet.setScale(settings.petScale) }
         wellness?.reconfigure()
         restartGitWatcher()
+        applyHotKey()
     }
 }

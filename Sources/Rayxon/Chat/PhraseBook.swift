@@ -8,7 +8,8 @@ enum PhraseBook {
              taskAdded, taskDone, allTasksDone, taskDue, chatOpen, noKey, memoryCleared,
              actRead, actCook, actLie, actTea, actDastarxon,
              morning, lunch, evening, night, userAway, userGone, userBack, cursorNear, hardLanding,
-             distracted, backToWork, startedCoding, openedMessaging, commit, peekaboo, chaseFail, bread, parachute, catVisit, peerHello
+             distracted, backToWork, startedCoding, openedMessaging, commit, peekaboo, chaseFail, bread, parachute, catVisit, peerHello,
+             rain, rainStopped, snow, birthday
     }
 
     static func event(for activity: PetState) -> Event? {
@@ -267,6 +268,26 @@ enum PhraseBook {
             .sulky: ["Boshqa Rayxon bor ekan. Hm.", "U ham yolg'izmi?"],
             .sassy: ["Tarmoqda yana bitta men bor! Salom, men!", "Boshqa Mac'da ham qiz bor ekan. Kim chiroyliroq? Men.", "Qo'shni Rayxon salom aytdi. Gap sotdik."],
             .sweet: ["Dugonam topildi! Tarmoqda!", "Salom dedik bir-birimizga! Yaxshi qiz ekan."],
+        ],
+        .rain: [
+            .sulky: ["Yomg'ir. Soyabon oldim. Siz ham oling.", "Yomg'ir yog'yapti. Kayfiyatimga mos."],
+            .sassy: ["Yomg'ir! Soyabon oldim. Siz ho'l bo'lasiz, men yo'q.", "Tashqarida yomg'ir. Ichkarida siz. Ikkalasi ham ho'l.", "Soyabon ochdim. Pastda ishlang, tomchilamasin."],
+            .sweet: ["Yomg'ir yog'yapti. Soyabon bor, kelasizmi?", "Yomg'ir ovozi yoqadi. Choy damlaymi?"],
+        ],
+        .rainStopped: [
+            .sulky: ["Yomg'ir to'xtadi.", "Soyabonni yopdim."],
+            .sassy: ["Yomg'ir to'xtadi. Soyabon ortiqcha bo'lib qoldi.", "Quyosh chiqdi. Derazadan qarang, bir marta."],
+            .sweet: ["Yomg'ir to'xtadi! Sayrga chiqamizmi?", "Havo ochildi. Zo'r!"],
+        ],
+        .snow: [
+            .sulky: ["Qor. Sovuq. Qor odam yasadim, u ham sovuq.", "Qor yog'yapti. Men ichkaridaman, baribir."],
+            .sassy: ["Qor yog'yapti! Qor odam yasadim, ismi Qorvoy.", "Qor! Qorvoy keldi. U sizdan ko'ra ko'proq gaplashadi.", "Tashqarida qor. Qorvoyga do'ppi kiydirdim."],
+            .sweet: ["Qor yog'yapti! Qarang, qor odam yasadim!", "Qor! Issiq choy va qor odam. Mukammal."],
+        ],
+        .birthday: [
+            .sulky: ["Tug'ilgan kuningiz bilan. Tort oldim. Yarmi meniki.", "Bugun sizniki. Mayli, tabriklayman."],
+            .sassy: ["Tug'ilgan kuningiz bilan! Tort pishirdim. Shamni men puflayman.", "Bugun tug'ilgan kuningiz! Sovg'a? Men. Men sovg'aman.", "Bayram! Bugun kod yozish taqiqlanadi. Mening qarorim."],
+            .sweet: ["Tug'ilgan kuningiz bilan! Siz eng yaxshisiz!", "Bayramingiz muborak! Tort, sovg'a va men — hammasi siz uchun!"],
         ],
         .memoryCleared: [
             .sulky: ["Unutdim. Hammasini.", "Bo'ldi."],
