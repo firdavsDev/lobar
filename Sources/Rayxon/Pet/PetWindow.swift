@@ -2,7 +2,7 @@ import AppKit
 
 final class PetWindow: NSWindow {
     init(size: CGFloat) {
-        super.init(contentRect: NSRect(x: 0, y: 0, width: size, height: size),
+        super.init(contentRect: NSRect(x: 0, y: 0, width: size, height: size * 2),
                    styleMask: [.borderless], backing: .buffered, defer: false)
         isOpaque = false
         backgroundColor = .clear

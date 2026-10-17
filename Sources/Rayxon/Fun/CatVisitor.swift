@@ -22,16 +22,20 @@ final class CatVisitor {
         stopX = petX - dir * 70
         floorY = Double(vf.minY)
         self.onArrive = onArrive; self.onLeave = onLeave
-        window = NSWindow(contentRect: NSRect(x: x, y: floorY, width: 56, height: 48), styleMask: [.borderless], backing: .buffered, defer: false)
+        window = NSWindow(contentRect: NSRect(x: x, y: floorY, width: 64, height: 56), styleMask: [.borderless], backing: .buffered, defer: false)
         window.isOpaque = false; window.backgroundColor = .clear; window.hasShadow = false
         window.level = .floating; window.ignoresMouseEvents = true
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: 56, height: 48))
-        let cfg = NSImage.SymbolConfiguration(pointSize: 36, weight: .regular)
-        let img = NSImage(systemSymbolName: "cat.fill", accessibilityDescription: "mushuk")?.withSymbolConfiguration(cfg)
-        imageView.image = img
-        imageView.contentTintColor = NSColor(calibratedRed: 0.35, green: 0.30, blue: 0.28, alpha: 1)
+        imageView = NSImageView(frame: NSRect(x: 0, y: 0, width: 64, height: 56))
+        if let img = Props.image("cat_walk") {
+            imageView.image = img
+        } else {
+            let cfg = NSImage.SymbolConfiguration(pointSize: 36, weight: .regular)
+            imageView.image = NSImage(systemSymbolName: "cat.fill", accessibilityDescription: "mushuk")?.withSymbolConfiguration(cfg)
+            imageView.contentTintColor = NSColor(calibratedRed: 0.35, green: 0.30, blue: 0.28, alpha: 1)
+        }
         imageView.imageScaling = .scaleProportionallyUpOrDown
+        imageView.wantsLayer = true
         window.contentView = imageView
         window.orderFrontRegardless()
         let t = Timer(timeInterval: 1.0 / 30, repeats: true) { [weak self] _ in MainActor.assumeIsolated { self?.tick() } }
@@ -43,7 +47,7 @@ final class CatVisitor {
 
     private func tick() {
         if let p = pausedUntil {
-            if now >= p { pausedUntil = nil; leaving = true }
+            if now >= p { pausedUntil = nil; leaving = true; if let w = Props.image("cat_walk") { imageView.image = w } }
             return
         }
         let speed = 70.0 / 30
@@ -53,6 +57,7 @@ final class CatVisitor {
             x += dir * speed
             if (dir > 0 && x >= stopX) || (dir < 0 && x <= stopX) {
                 pausedUntil = now + 6
+                if let sit = Props.image("cat_sit") { imageView.image = sit }
                 onArrive()
             }
         } else {
@@ -62,9 +67,8 @@ final class CatVisitor {
                 timer?.invalidate(); timer = nil; window.orderOut(nil); onLeave(); return
             }
         }
-        imageView.layer?.transform = CATransform3DIdentity
         let facingLeft = leaving ? dir > 0 : dir < 0
-        imageView.layer?.setAffineTransform(facingLeft ? CGAffineTransform(scaleX: -1, y: 1).translatedBy(x: -56, y: 0) : .identity)
+        imageView.layer?.setAffineTransform(facingLeft ? CGAffineTransform(scaleX: -1, y: 1).translatedBy(x: -64, y: 0) : .identity)
         window.setFrameOrigin(NSPoint(x: x, y: floorY + bob))
     }
     private var leaving = false

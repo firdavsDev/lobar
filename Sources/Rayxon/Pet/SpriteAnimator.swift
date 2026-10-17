@@ -6,7 +6,7 @@ import QuartzCore
 final class SpriteAnimator {
     let layer = CALayer()
     let sleepEffect = SleepEffectLayer()
-    let parachute = CAShapeLayer()
+    var onParachute: ((Bool) -> Void)?
     private(set) var clock = FrameClock(fps: 1, frameCount: 1, loop: true)
     private(set) var state: PetState = .idle
     private(set) var facingLeft = false
@@ -20,29 +20,9 @@ final class SpriteAnimator {
         sleepEffect.frame = CGRect(x: 0, y: 0, width: 128, height: 128)
         sleepEffect.zPosition = 10
         layer.addSublayer(sleepEffect)
-        parachute.fillColor = NSColor(calibratedRed: 0.95, green: 0.45, blue: 0.55, alpha: 0.95).cgColor
-        parachute.strokeColor = NSColor(calibratedRed: 0.55, green: 0.2, blue: 0.3, alpha: 1).cgColor
-        parachute.lineWidth = 1.5
-        parachute.isHidden = true
-        parachute.zPosition = 5
-        layer.addSublayer(parachute)
     }
 
-    func setParachute(_ on: Bool) {
-        guard parachute.isHidden == on else { return }
-        let w = layer.bounds.width, h = layer.bounds.height
-        let p = CGMutablePath()
-        let top = h * 1.35, cx = w / 2, r = w * 0.42
-        p.addArc(center: CGPoint(x: cx, y: top - r * 0.2), radius: r, startAngle: 0, endAngle: .pi, clockwise: false)
-        p.closeSubpath()
-        // lines to shoulders
-        for dx in [-r, -r / 3, r / 3, r] {
-            p.move(to: CGPoint(x: cx + dx, y: top - r * 0.2))
-            p.addLine(to: CGPoint(x: cx + dx * 0.25, y: h * 0.72))
-        }
-        parachute.path = p
-        parachute.isHidden = !on
-    }
+    func setParachute(_ on: Bool) { onParachute?(on) }
 
     func play(_ image: CGImage, animation: SpriteAnimation, state: PetState) {
         self.state = state

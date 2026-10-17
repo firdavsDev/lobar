@@ -6,14 +6,36 @@ final class PetView: NSView {
     let animator: SpriteAnimator
     weak var controller: PetController?
 
+    let parachute = CALayer()
+
     init(animator: SpriteAnimator, size: CGFloat) {
         self.animator = animator
-        super.init(frame: NSRect(x: 0, y: 0, width: size, height: size))
+        super.init(frame: NSRect(x: 0, y: 0, width: size, height: size * 2))
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
-        animator.layer.frame = bounds
-        animator.layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        animator.layer.frame = CGRect(x: 0, y: 0, width: size, height: size)
         layer?.addSublayer(animator.layer)
+        parachute.contents = Props.cgImage("parachute")
+        parachute.contentsGravity = .resizeAspect
+        parachute.isHidden = true
+        parachute.zPosition = 5
+        layer?.addSublayer(parachute)
+        layoutProps()
+    }
+
+    /// Square the sprite lives in (bottom of the view).
+    var spriteRect: CGRect { CGRect(x: 0, y: 0, width: bounds.width, height: bounds.width) }
+
+    func layoutProps() {
+        let s = bounds.width
+        animator.layer.frame = CGRect(x: 0, y: 0, width: s, height: s)
+        parachute.frame = CGRect(x: s * 0.02, y: s * 0.72, width: s * 0.96, height: s * 1.2)
+    }
+
+    func setParachute(_ on: Bool) {
+        CATransaction.begin(); CATransaction.setDisableActions(true)
+        parachute.isHidden = !on
+        CATransaction.commit()
     }
 
     required init?(coder: NSCoder) { nil }
@@ -22,7 +44,8 @@ final class PetView: NSView {
 
     override func hitTest(_ point: NSPoint) -> NSView? {
         let local = convert(point, from: superview)
-        return animator.alpha(at: local, in: bounds) > 0.05 ? self : nil
+        guard spriteRect.contains(local) else { return nil }
+        return animator.alpha(at: local, in: spriteRect) > 0.05 ? self : nil
     }
 
     override func mouseDown(with event: NSEvent) { controller?.mouseDown(event) }

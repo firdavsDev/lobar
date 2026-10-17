@@ -60,6 +60,7 @@ final class PetController {
         window = PetWindow(size: Self.baseSize)
         view = PetView(animator: animator, size: Self.baseSize)
         window.contentView = view
+        animator.onParachute = { [weak view] on in view?.setParachute(on) }
         let floor = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
         body = Body(x: floor.midX, y: floor.minY, vx: 0, vy: 0)
         view.controller = self
@@ -73,11 +74,14 @@ final class PetController {
 
     func setScale(_ s: Double) {
         scale = max(0.4, min(2.5, s))
-        window.setContentSize(NSSize(width: size, height: size))
-        view.frame = NSRect(x: 0, y: 0, width: size, height: size)
-        animator.layer.frame = view.bounds
+        window.setContentSize(NSSize(width: size, height: size * 2))
+        view.frame = NSRect(x: 0, y: 0, width: size, height: size * 2)
+        view.layoutProps()
         applyBodyToWindow()
     }
+
+    /// Screen rect of the sprite square (window is taller to leave room for props above her).
+    var spriteFrame: NSRect { NSRect(x: window.frame.minX, y: window.frame.minY, width: size, height: size) }
 
     func setOutfit(_ name: String) {
         outfit = name
@@ -335,7 +339,7 @@ final class PetController {
         let dx = Double(p.x) - body.x
         let near = abs(dx) < 220 && Double(p.y) > body.y - 20 && Double(p.y) < body.y + Double(size) + 40
         if near, abs(dx) > 12 { animator.setFacing(left: dx < 0) }
-        let over = window.frame.insetBy(dx: -6, dy: -6).contains(p)
+        let over = spriteFrame.insetBy(dx: -6, dy: -6).contains(p)
         if over {
             if cursorNearSince == nil { cursorNearSince = now }
             else if now - cursorNearSince! > 1.2 { cursorNearSince = .infinity; onEvent?(.cursorNear) }
@@ -429,7 +433,7 @@ final class PetController {
         guard lastMouseT > 0, t - lastMouseT < 0.2 else { return false }
         let speed = hypot(Double(p.x - lastMouse.x), Double(p.y - lastMouse.y)) / (t - lastMouseT)
         let near = abs(Double(p.x) - body.x) < 420 && abs(Double(p.y) - body.y) < 260
-        let over = window.frame.insetBy(dx: -10, dy: -10).contains(p)
+        let over = spriteFrame.insetBy(dx: -10, dy: -10).contains(p)
         return speed > 900 && near && !over
     }
 

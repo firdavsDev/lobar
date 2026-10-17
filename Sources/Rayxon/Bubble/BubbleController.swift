@@ -113,7 +113,7 @@ final class BubbleController {
 
     private func reposition() {
         guard panel.isVisible, let pet else { return }
-        let petFrame = pet.window.frame
+        let petFrame = pet.spriteFrame
         let size = panel.frame.size
         var x = petFrame.midX - size.width / 2
         var y = petFrame.maxY - 18

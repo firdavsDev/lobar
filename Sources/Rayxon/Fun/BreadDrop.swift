@@ -23,7 +23,8 @@ final class BreadDrop {
         window.level = .floating; window.ignoresMouseEvents = true
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
         let iv = NSImageView(frame: NSRect(x: 0, y: 0, width: 44, height: 44))
-        iv.image = Self.nonImage(size: 44)
+        iv.image = Props.image("non") ?? Self.nonImage(size: 44)
+        iv.imageScaling = .scaleProportionallyUpOrDown
         window.contentView = iv
         window.orderFrontRegardless()
         let t = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in MainActor.assumeIsolated { self?.tick() } }
