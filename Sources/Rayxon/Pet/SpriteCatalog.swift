@@ -25,7 +25,7 @@ final class SpriteCatalog {
     static let outfitTitles: [String: String] = [
         "atlas": "Atlas — xonatlas ko'ylak",
         "adras": "Adras — chopon va do'ppi",
-        "bahor": "Bahor — gulli atlas",
+        "bahor": "Bahor — pushti gulli atlas",
         "tungi": "Tungi — to'q zardo'zi",
     ]
 

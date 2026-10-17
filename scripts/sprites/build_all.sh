@@ -32,9 +32,22 @@ if [ -d art/adras ]; then
   mkdir -p $OUT/adras
   slice art/adras/adras_idle.jpg $OUT/adras/idle.png --frames 4
   slice art/adras/adras_walk.jpg $OUT/adras/walk.png --frames 6 --order 2,3,4,1
-  [ -f art/adras/adras_happy.jpg ] && slice art/adras/adras_happy.jpg $OUT/adras/happy.png --frames 6
-  [ -f art/adras/adras_sleep.jpg ] && slice art/adras/adras_sleep.jpg $OUT/adras/sleep.png --frames 4
+  if [ -f art/adras/adras_happy.jpg ]; then
+    slice art/adras/adras_happy.jpg $TMP/ah.png --frames 7 --strip-floaters
+    split $TMP/ah.png $OUT/adras happy:4 sleep:1 dizzy:1 annoyed:1
+  fi
   cp art/adras/adras_idle.jpg $OUT/adras/reference.jpg
 fi
+# ---- generic outfits (bahor, tungi): idle 4, walk 6, happy sheet 7 ----
+for o in bahor tungi; do
+  [ -d art/$o ] || continue
+  mkdir -p $OUT/$o
+  [ -f art/$o/${o}_idle.jpg ] && slice art/$o/${o}_idle.jpg $OUT/$o/idle.png --frames 4 && cp art/$o/${o}_idle.jpg $OUT/$o/reference.jpg
+  [ -f art/$o/${o}_walk.jpg ] && slice art/$o/${o}_walk.jpg $OUT/$o/walk.png --frames 6 --order 2,3,4,1
+  if [ -f art/$o/${o}_happy.jpg ]; then
+    slice art/$o/${o}_happy.jpg $TMP/${o}h.png --frames 7 --strip-floaters
+    split $TMP/${o}h.png $OUT/$o happy:4 sleep:1 dizzy:1 annoyed:1
+  fi
+done
 rm -rf $TMP
 uv run --script scripts/sprites/manifest.py $OUT
