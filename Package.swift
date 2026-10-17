@@ -2,18 +2,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "Rayxon",
+    name: "Lobar",
     platforms: [.macOS(.v15)],
     targets: [
         .executableTarget(
-            name: "Rayxon",
-            path: "Sources/Rayxon",
+            name: "Lobar",
+            path: "Sources/Lobar",
             resources: [.copy("Resources")]
         ),
         .testTarget(
-            name: "RayxonTests",
-            dependencies: ["Rayxon"],
-            path: "Tests/RayxonTests"
+            name: "LobarTests",
+            dependencies: ["Lobar"],
+            path: "Tests/LobarTests"
         ),
     ]
 )

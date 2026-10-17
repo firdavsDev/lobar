@@ -1,22 +1,22 @@
-# Rayxon — project guide for Claude
+# Lobar — project guide for Claude
 
 Uzbek chibi desktop pet for macOS. Swift 6 (strict concurrency), AppKit + SwiftUI, SwiftPM only (no .xcodeproj).
-Repo: github.com/firdavsDev/rayxon. User communicates in Uzbek/English; UI strings are Uzbek (Latin).
+Repo: github.com/firdavsDev/lobar. User communicates in Uzbek/English; UI strings are Uzbek (Latin).
 
 ## Commands
 - `swift test` — 100+ unit tests (Swift Testing). Must stay green.
-- `scripts/run.sh` — debug build → `dist/Rayxon.app` → relaunch. `scripts/run.sh --install` → release → `/Applications/Rayxon.app`.
+- `scripts/run.sh` — debug build → `dist/Lobar.app` → relaunch. `scripts/run.sh --install` → release → `/Applications/Lobar.app`.
 - `scripts/bundle.sh [debug|release]` — build the .app (SwiftPM resource bundle copied inside).
 - `scripts/sprites/build_all.sh` — regenerate every sprite strip from `art/<outfit>/*.jpg|png` + `manifest.json`.
 - `scripts/release.sh VERSION [notes]` — tests, stamps Info.plist, DMG, asks, then commits/pushes + `gh release create`.
-  Ad-hoc signed unless `RAYXON_SIGN_IDENTITY` (+ `NOTARY_PROFILE` for notarization) is set.
-- Logs: `log stream --predicate 'subsystem == "dev.davronbek.rayxon"' --level debug`.
+  Ad-hoc signed unless `LOBAR_SIGN_IDENTITY` (+ `NOTARY_PROFILE` for notarization) is set.
+- Logs: `log stream --predicate 'subsystem == "dev.davronbek.lobar"' --level debug`.
 
 ## Debug hooks (env vars on launch)
-`RAYXON_DEBUG_DROP_Y=800` drop from height · `RAYXON_DEBUG_SAY="..."` speak on launch ·
-`RAYXON_DEBUG_EVENT=rain|snow|birthday` fire an event · `RAYXON_DEBUG_SHOT=/dir` capture settings/tasks windows to PNG.
+`LOBAR_DEBUG_DROP_Y=800` drop from height · `LOBAR_DEBUG_SAY="..."` speak on launch ·
+`LOBAR_DEBUG_EVENT=rain|snow|birthday` fire an event · `LOBAR_DEBUG_SHOT=/dir` capture settings/tasks windows to PNG.
 
-## Architecture (Sources/Rayxon)
+## Architecture (Sources/Lobar)
 - `App/AppDelegate.swift` — composition root; wires every service, menu actions, pet events → lines/voice.
 - `Pet/` — `PetController` (30 Hz tick, state machine: idle/walk/fall/drag/sleep/activity/hiding/chasing/fetching),
   `Physics` (pure), `JumpPlanner`, `ShakeDetector`, `BehaviorPlanner`, `SpriteAnimator`/`FrameClock`, `PetWindow` (2× tall, sprite at bottom).

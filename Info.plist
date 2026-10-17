@@ -5,17 +5,17 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Rayxon</string>
+	<string>Lobar</string>
 	<key>CFBundleExecutable</key>
-	<string>Rayxon</string>
+	<string>Lobar</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>dev.davronbek.rayxon</string>
+	<string>dev.davronbek.lobar</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Rayxon</string>
+	<string>Lobar</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

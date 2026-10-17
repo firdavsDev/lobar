@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# One-command release: tests → version stamp → Rayxon.app → DMG → commit + push → GitHub release.
+# One-command release: tests → version stamp → Lobar.app → DMG → commit + push → GitHub release.
 # Usage:
 #   scripts/release.sh 0.2.0                      # notes = commit subjects since the last tag
 #   scripts/release.sh 0.2.0 "Yangi kiyim, ..."   # custom notes
 # Ad-hoc signed by default (users right-click → Open once). Developer ID + notarization when set:
-#   RAYXON_SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" NOTARY_PROFILE=rayxon-notary
-# One-time: xcrun notarytool store-credentials rayxon-notary --apple-id you@example.com --team-id TEAMID --password <app-specific>
+#   LOBAR_SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" NOTARY_PROFILE=lobar-notary
+# One-time: xcrun notarytool store-credentials lobar-notary --apple-id you@example.com --team-id TEAMID --password <app-specific>
 set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION="${1:?version required, e.g. 0.2.0}"
 VERSION="${VERSION#v}"
 TAG="v$VERSION"
 NOTES="${2:-}"
-IDENTITY="${RAYXON_SIGN_IDENTITY:-}"
+IDENTITY="${LOBAR_SIGN_IDENTITY:-}"
 
 # guards (Info.plist may be dirty from an aborted run)
 [ "$(git branch --show-current)" = main ] || { echo "switch to main first"; exit 1; }
@@ -33,16 +33,16 @@ plutil -replace CFBundleShortVersionString -string "$VERSION" Info.plist
 plutil -replace CFBundleVersion -string "$(date +%Y%m%d%H%M)" Info.plist
 
 scripts/bundle.sh release
-APP=dist/Rayxon.app
+APP=dist/Lobar.app
 if [ -n "$IDENTITY" ]; then
   codesign --force --deep --options runtime --timestamp --sign "$IDENTITY" "$APP"
   codesign --verify --deep --strict --verbose=2 "$APP"
 fi
 
-DMG="dist/Rayxon-$VERSION.dmg"
+DMG="dist/Lobar-$VERSION.dmg"
 rm -f "$DMG"
 STAGE=$(mktemp -d); cp -R "$APP" "$STAGE/"; ln -s /Applications "$STAGE/Applications"
-hdiutil create -volname "Rayxon" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+hdiutil create -volname "Lobar" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$STAGE"
 if [ -n "$IDENTITY" ]; then
   codesign --force --timestamp --sign "$IDENTITY" "$DMG"
@@ -61,4 +61,4 @@ if [ "$OK" != y ]; then
 fi
 git commit -q -m "release: $VERSION" Info.plist
 git push -q
-gh release create "$TAG" "$DMG" --target "$(git rev-parse HEAD)" --title "Rayxon $VERSION" --notes "$NOTES"
+gh release create "$TAG" "$DMG" --target "$(git rev-parse HEAD)" --title "Lobar $VERSION" --notes "$NOTES"

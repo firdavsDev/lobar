@@ -3,7 +3,7 @@
 # Edit the table below when adding sheets. Usage: scripts/sprites/build_all.sh
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-OUT=Sources/Rayxon/Resources/Sprites
+OUT=Sources/Lobar/Resources/Sprites
 TMP=$(mktemp -d)
 slice() { uv run --script scripts/sprites/slice.py "$@" 2>/dev/null | tail -1; }
 split() { uv run --script scripts/sprites/split_strip.py "$@" >/dev/null; }
