@@ -13,11 +13,13 @@ final class FloorProp {
         window = NSWindow(contentRect: NSRect(x: x - w / 2, y: screen.visibleFrame.minY, width: w, height: height),
                           styleMask: [.borderless], backing: .buffered, defer: false)
         window.isOpaque = false; window.backgroundColor = .clear; window.hasShadow = false
-        window.level = .floating; window.ignoresMouseEvents = true
+        window.level = .floating; window.ignoresMouseEvents = false
         window.collectionBehavior = [.canJoinAllSpaces, .stationary]
-        let iv = NSImageView(frame: NSRect(x: 0, y: 0, width: w, height: height))
+        let iv = ClickableImageView(frame: NSRect(x: 0, y: 0, width: w, height: height))
         iv.image = image; iv.imageScaling = .scaleProportionallyUpOrDown
+        iv.toolTip = "Olib tashlash uchun bosing"
         window.contentView = iv
+        iv.onClick = { [weak self] in self?.dismiss() }
         window.alphaValue = 0
         window.orderFrontRegardless()
         NSAnimationContext.runAnimationGroup { ctx in ctx.duration = 0.6; window.animator().alphaValue = 1 }
@@ -39,4 +41,10 @@ final class FloorProp {
         }
         RunLoop.main.add(t, forMode: .common)
     }
+}
+
+@MainActor
+final class ClickableImageView: NSImageView {
+    var onClick: (() -> Void)?
+    override func mouseDown(with event: NSEvent) { onClick?() }
 }

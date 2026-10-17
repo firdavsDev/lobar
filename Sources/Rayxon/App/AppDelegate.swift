@@ -193,7 +193,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     case "rain": self.handleWeatherEvent(.rainStarted)
                     case "snow": self.handleWeatherEvent(.snowStarted)
                     case "birthday":
+                        let savedEnabled = self.settings.birthdayEnabled, savedDate = self.settings.birthday
                         self.settings.birthdayEnabled = true; self.settings.birthday = Date(); self.birthdayShownDay = nil; self.checkBirthday()
+                        self.settings.birthdayEnabled = savedEnabled; self.settings.birthday = savedDate
                     default: break
                     }
                 }
@@ -395,7 +397,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.bubble?.say(self.line(.memoryCleared))
             }
         }
-        actions.hide = { [weak pet] in pet?.hide() }
+        actions.hide = { [weak self] in
+            guard let self else { return }
+            self.pet?.hide()
+            self.floorProps.forEach { $0.dismiss() }; self.floorProps.removeAll()
+        }
         actions.quit = { NSApp.terminate(nil) }
         let menu = ContextMenuBuilder.build(state: state, actions: actions)
         if let status = wellness?.pomodoroStatus, let item = menu.items.first(where: { $0.title.hasPrefix("Pomodoro") }) {
