@@ -129,9 +129,29 @@
     }
   },
   "bahor": {
+    "annoyed": {
+      "frames": 1,
+      "fps": 0.8,
+      "loop": true
+    },
+    "dizzy": {
+      "frames": 1,
+      "fps": 4,
+      "loop": true
+    },
+    "happy": {
+      "frames": 4,
+      "fps": 8,
+      "loop": true
+    },
     "idle": {
       "frames": 4,
       "fps": 6,
+      "loop": true
+    },
+    "sleep": {
+      "frames": 1,
+      "fps": 3,
       "loop": true
     },
     "walk": {

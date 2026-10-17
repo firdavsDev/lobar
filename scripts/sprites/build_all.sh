@@ -45,8 +45,18 @@ for o in bahor tungi; do
   [ -f art/$o/${o}_idle.jpg ] && slice art/$o/${o}_idle.jpg $OUT/$o/idle.png --frames 4 && cp art/$o/${o}_idle.jpg $OUT/$o/reference.jpg
   [ -f art/$o/${o}_walk.jpg ] && slice art/$o/${o}_walk.jpg $OUT/$o/walk.png --frames 6 --order 2,3,4,1
   if [ -f art/$o/${o}_happy.jpg ]; then
-    slice art/$o/${o}_happy.jpg $TMP/${o}h.png --frames 7 --strip-floaters
-    split $TMP/${o}h.png $OUT/$o happy:4 sleep:1 dizzy:1 annoyed:1
+    n=$(slice art/$o/${o}_happy.jpg $TMP/${o}h.png --strip-floaters | grep -oE '[0-9]+ frames' | cut -d' ' -f1)
+    if [ "$n" != "6" ] && [ "$n" != "7" ] && [ "$n" != "8" ]; then
+      # sprites touching: fall back to valley split with the count noted in art/<o>/happy_frames (default 6)
+      n=$(cat art/$o/happy_frames 2>/dev/null || echo 6)
+      slice art/$o/${o}_happy.jpg $TMP/${o}h.png --strip-floaters --frames $n >/dev/null
+    fi
+    case "$n" in
+      8) split $TMP/${o}h.png $OUT/$o happy:4 sleep:2 dizzy:1 annoyed:1 ;;
+      7) split $TMP/${o}h.png $OUT/$o happy:4 sleep:1 dizzy:1 annoyed:1 ;;
+      6) split $TMP/${o}h.png $OUT/$o happy:4 sleep:1 dizzy:1; cp $OUT/$o/dizzy.png $OUT/$o/annoyed.png ;;
+      *) echo "warning: $o happy sheet has $n frames, skipped" ;;
+    esac
   fi
 done
 rm -rf $TMP
