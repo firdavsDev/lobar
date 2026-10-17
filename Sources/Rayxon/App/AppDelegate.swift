@@ -38,8 +38,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     private func touch() { settings.lastInteraction = Date(); settings.affection = mood.affection }
     private var laughs = LaughLimiter()
-    private func sayAndSpeak(_ raw: String, seconds: Double? = nil) {
+    private var pendingWhileAsleep: [String] = []
+    /// Everything she says goes through here. While asleep, lines are queued (max 3) and replayed on wake.
+    private func sayAndSpeak(_ raw: String, seconds: Double? = nil, force: Bool = false) {
         let text = laughs.filter(raw)
+        if let pet, pet.isSleeping, !force {
+            if pendingWhileAsleep.count < 3 { pendingWhileAsleep.append(text) }
+            return
+        }
         bubble?.say(text, seconds: seconds); voice?.speak(text)
     }
 
@@ -92,7 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             wellness.onRoutine = { [weak self] e in self?.handleRoutine(e) }
             wellness.onNight = { [weak self] night in
                 guard let self, let pet = self.pet, self.settings.nightMode else { return }
-                if night, !pet.isSleeping { self.autoSlept = true; pet.sleep(); self.sayAndSpeak(self.line(.night)) }
+                if night, !pet.isSleeping { self.autoSlept = true; pet.sleep(); self.sayAndSpeak(self.line(.night), force: true) }
                 else if !night, pet.isSleeping, self.autoSlept { self.autoSlept = false; pet.wake() }
             }
             wellness.lineFor = { [weak self] ev in self?.line(ev) ?? "..." }
@@ -106,12 +112,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             wellness.onPomodoro = { [weak self] transition, line in
                 guard let self, let pet = self.pet else { return }
                 if transition == .breakStarted { self.stats.record(.pomodoro) }
+                if pet.isSleeping { self.sayAndSpeak(line); return }
                 if transition == .breakStarted { pet.react(.eat, seconds: 5) } else { pet.celebrate(seconds: 2) }
                 self.sayAndSpeak(line, seconds: 8)
             }
             wellness.onTaskDue = { [weak self] task in
                 guard let self, let pet = self.pet else { return }
-                pet.celebrate(seconds: 3)
+                if !pet.isSleeping { pet.celebrate(seconds: 3) }
                 self.sayAndSpeak(self.line(.taskDue, task: task.title), seconds: 15)
             }
             wellness.onChatter = { [weak self] in
@@ -235,11 +242,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .slept:
             SoundFX.play(.sleep)
             wellness?.setPetSleeping(true)
-            bubble.say(line(.sleep))
+            bubble.hide()
+            sayAndSpeak(line(.sleep), seconds: 4, force: true)
         case .woke:
             SoundFX.play(.wake)
             wellness?.setPetSleeping(false)
             bubble.say(line(.wake))
+            let queued = pendingWhileAsleep; pendingWhileAsleep.removeAll()
+            for (i, text) in queued.enumerated() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4 + Double(i) * 7) { [weak self] in self?.sayAndSpeak(text, seconds: 8) }
+            }
         case .arrivedAtCursor:
             sayAndSpeak(line(.cameToCursor))
         }
@@ -576,7 +588,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         case .userAway: if !pet.isSleeping { bubble?.say(line(.userAway), seconds: 6) }
-        case .userGone: if !pet.isSleeping { autoSlept = true; pet.sleep(); bubble?.say(line(.userGone), seconds: 6) }
+        case .userGone: if !pet.isSleeping { autoSlept = true; pet.sleep(); sayAndSpeak(line(.userGone), seconds: 6, force: true) }
         case .userBack:
             if pet.isSleeping, autoSlept { autoSlept = false; pet.wake() }
             sayAndSpeak(line(.userBack), seconds: 6)
